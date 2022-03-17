@@ -42,11 +42,13 @@ Also, look at the data through the environment tab in rstudio or using head() to
 ```{r}
 #create rank column (minus flips the ranking)
 #then clean it up, pull out only peak value, date, rank
-peakflows <- peakflows %>% mutate(ranks = rank(-peak_va)) %>%
-              select(peak_dt, peak_va, ranks)
+peakflows <- peakflows %>% 
+  mutate(ranks = rank(-peak_va)) %>%
+  select(peak_dt, peak_va, ranks)
 
 #look at it
-ggplot(peakflows, aes(peak_dt, peak_va, color = ranks))+
+ggplot(peakflows, 
+       aes(peak_dt, peak_va, color = ranks))+
   geom_point()
 
 head(peakflows)
@@ -81,12 +83,14 @@ N <- length(peakflows$peak_dt)
 a <- 0.44
 
 #calculate exceedence/non-exceedence with gringorten and return period
-peakflows <- peakflows %>% mutate(qi = (ranks - a) / (N + 1 - (2*a))) %>%
-                           mutate(pi = 1 - qi) %>%
-                           mutate(TpEst = 1 / (1-pi))
+peakflows <- peakflows %>% 
+  mutate(qi = (ranks - a) / (N + 1 - (2*a))) %>%
+  mutate(pi = 1 - qi) %>%
+  mutate(TpEst = 1 / (1-pi))
 
 #Plot peak flows on y and est return period on the x
-peakflows %>% ggplot(aes(x = TpEst, y = peak_va)) +
+peakflows %>% 
+  ggplot(aes(x = TpEst, y = peak_va)) +
   geom_point()
 
 ```
@@ -124,12 +128,13 @@ First calculate p theoretical with the equation above.
 
 Then calculate Tp theoretical (the return period) as T was calculated above Tp = 1 / (1-p)
 
-Finally create a plot of return period on the y axis and peak values on the x. Include return periods calculated from your data and those calculated from the Gumbel distribution on your plot as points of different colors.
+Finally create a plot of return period on the x axis and peak values on the y. Include return periods calculated from your data and those calculated from the Gumbel distribution on your plot as points of different colors.
 
 ```{r}
-peakflows <- peakflows %>% mutate(pTheoretical = 
-                                    exp(-exp(-((peak_va - u) / alpha)))) %>%
-                           mutate(TpTheoretical = (1 / (1-pTheoretical)))
+peakflows <- peakflows %>% 
+  mutate(pTheoretical = 
+    exp(-exp(-((peak_va - u) / alpha)))) %>%
+    mutate(TpTheoretical = (1 / (1-pTheoretical)))
 
 
 peakflows %>% ggplot(aes(x = TpEst, y = peak_va, color = "Estimated")) +
@@ -160,21 +165,23 @@ peakflows %>% ggplot(aes(x = TpEst, y = peak_va, color = "Estimated")) +
 
 This plot is showing a representation of the fitted distribution by calculating the return period for each point in our dataset. But we can also use it to calculated the specific flow that corresponds to any return period by using the established relationship.
 
-In the chunk below, calculate the magnitude of a 1 in 100 chance, or 100 year flood using the following two formulas where p = exceedance probability and Tp = return period. These are just the equations used to calculate return period rearranged to calculate peak flow.
+In the chunk below, calculate the magnitude of a 1 in 100 chance, or 100 year flood using the following two formulas where p = non-exceedance probability and Tp = return period. These are just the equations used to calculate return period rearranged to calculate peak flow.
 
-$p = Tp / (Tp - 1)$
+p = 1 - (1 / Tp)
 
-$peakflow = u - (alpha - log(log(p)))$
+peakflow = u - (alpha * ln(-ln(p)))
+
+(log() in r is the natural log, log10() is base 10 log)
 
 According to this flow, what is the 1 in 100 chance flood at this location? Do you see any issues with reporting this as the 1 in 100 chance flood? What are they?
 
 ```{r}
-#exp(-exp(-((peak_va - u) / alpha)))) 
+
 Tp = 100
 
-p = Tp / (Tp - 1)
+p = 1 - (1/Tp)
 
-peak_va = u - (alpha * log(log(p)))
+peak_va = u - (alpha * log(-log(p)))
 ```
 This is a good opportunity to illustrate the usefulness of writing your own functions. When you install packages in R, you get a bunch of functions you can use. But you can also create these on your own to simplify your analyses!
 

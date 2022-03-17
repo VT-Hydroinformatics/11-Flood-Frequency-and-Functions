@@ -35,6 +35,11 @@ Make the plot from the last code chunk again but color the points by rank to che
 Also, look at the data through the environment tab in rstudio or using head() to double check.
 
 ```{r}
+#create rank column (minus flips the ranking)
+#then clean it up, pull out only peak value, date, rank
+
+
+#look at it
 
 ```
 Now we need to calculate the exceedance probability and return interval for each value in our data. For flood frequency analysis, it is common to use the Gringorten plotting position formula: 
@@ -94,7 +99,7 @@ First calculate p theoretical with the equation above.
 
 Then calculate Tp theoretical (the return period) as T was calculated above Tp = 1 / (1-p)
 
-Finally create a plot of return period on the y axis and peak values on the x. Include return periods calculated from your data and those calculated from the Gumbel distribution on your plot as points of different colors.
+Finally create a plot of return period on the x axis and peak values on the y. Include return periods calculated from your data and those calculated from the Gumbel distribution on your plot as points of different colors.
 
 ```{r}
 
@@ -112,15 +117,18 @@ With this plot you could look up the return period for any flood or the discharg
 
 This plot is showing a representation of the fitted distribution by calculating the return period for each point in our dataset. But we can also use it to calculated the specific flow that corresponds to any return period by using the established relationship.
 
-In the chunk below, calculate the magnitude of a 1 in 100 chance, or 100 year flood using the following two formulas where p = exceedance probability and Tp = return period. These are just the equations used to calculate return period rearranged to calculate peak flow.
+In the chunk below, calculate the magnitude of a 1 in 100 chance, or 100 year flood using the following two formulas where p = non-exceedance probability and Tp = return period. These are just the equations used to calculate return period rearranged to calculate peak flow.
 
-$p = Tp / (Tp - 1)$
+p = 1 - (1 / Tp)
 
-$peakflow = u - (alpha - log(log(p)))$
+peakflow = u - (alpha * ln(-ln(p)))
+
+(log() in r is the natural log, log10() is base 10 log)
 
 According to this flow, what is the 1 in 100 chance flood at this location? Do you see any issues with reporting this as the 1 in 100 chance flood? What are they?
 
 ```{r}
+
 
 ```
 This is a good opportunity to illustrate the usefulness of writing your own functions. When you install packages in R, you get a bunch of functions you can use. But you can also create these on your own to simplify your analyses!
@@ -143,6 +151,7 @@ Our function will be called "ReturnPeriod" and we will pass it the flow we want 
 
 We will test the function by having it calculate the return period for the 100 year flood we calculated earlier (120027). If it works, it should spit out 100.
 ```{r}
+
 
 ```
 
