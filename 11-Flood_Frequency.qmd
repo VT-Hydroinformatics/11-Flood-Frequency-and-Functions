@@ -95,7 +95,7 @@ ggplot(peakflows,
        aes(peak_dt, peak_va, color = ranks))+
   geom_point()
 
-head(peakflows)
+print(head(peakflows))
 ```
 
 Now we need to calculate the exceedance probability and return period
