@@ -1,11 +1,27 @@
 ---
-title: "10 - Flood Frequency and Functions"
+title: "Chapter 11:  Flood Frequency and Functions"
+date: today
+github: https://github.com/VT-Hydroinformatics/11-Flood-Frequency-and-Functions
+author:
+  - name: JP Gannon
+    orcid: 0000-0002-4595-3214
+    github: jpgannon
+    url: https://jpgannon.github.io/
+    affiliation: 
+      - name: Virginia Tech
+        url: https://www.vt.edu/
 format:
   html: 
     self-contained: true
+  ipynb:
+      nb-frontmatter: true
+jupyter: 
+  kernel: ir
 editor: 
   markdown: 
     wrap: 72
+execute: 
+  enabled: true
 ---
 
 # Flood Frequency Analysis and Creating Functions {#floods}
