@@ -1,11 +1,9 @@
 ---
 title: "Chapter 11:  Flood Frequency and Functions"
 date: today
-github: https://github.com/VT-Hydroinformatics/11-Flood-Frequency-and-Functions
 author:
   - name: JP Gannon
     orcid: 0000-0002-4595-3214
-    github: jpgannon
     url: https://jpgannon.github.io/
     affiliation: 
       - name: Virginia Tech
@@ -14,12 +12,10 @@ format:
   html: 
     self-contained: true
   ipynb:
-      nb-frontmatter: true
-jupyter: 
-  kernel: ir
-editor: 
-  markdown: 
-    wrap: 72
+    nb-frontmatter: true
+    jupyter:
+      kernel: ir
+      ipynb-shell-interactivity: all
 execute: 
   enabled: true
 ---
@@ -95,7 +91,7 @@ ggplot(peakflows,
        aes(peak_dt, peak_va, color = ranks))+
   geom_point()
 
-print(head(peakflows))
+head(peakflows)
 ```
 
 Now we need to calculate the exceedance probability and return period
