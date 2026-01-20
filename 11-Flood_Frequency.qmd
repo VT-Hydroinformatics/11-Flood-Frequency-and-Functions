@@ -1,19 +1,31 @@
 ---
-title: "10 - Flood Frequency and Functions"
+title: "Chapter 11:  Flood Frequency and Functions"
+date: today
+author:
+  - name: JP Gannon
+    orcid: 0000-0002-4595-3214
+    url: https://jpgannon.github.io/
+    affiliation: 
+      - name: Virginia Tech
+        url: https://www.vt.edu/
 format:
   html: 
     self-contained: true
-editor: 
-  markdown: 
-    wrap: 72
+  ipynb:
+    nb-frontmatter: true
+    jupyter:
+      kernel: ir
+      ipynb-shell-interactivity: all
+execute: 
+  enabled: true
 ---
 
-# Flood Frequency Analysis and Creating Functions {#floods}
+# Flood Frequency Analysis and Creating Functions
 
 ## Template Repository
 
 The following activity is available as a template github repository at
-the following link:
+the following link: https://github.com/VT-Hydroinformatics/11-Flood-Frequency-and-Functions
 
 ## Intro
 
@@ -135,7 +147,9 @@ There are many distributions that can be used in this situation, but a
 common one for flood frequency analyses is the Gumbel extreme value
 distribution:
 
-![Gumbel Distribution](images/gumbel.png "Gumbel Distribution")
+![](images/gumbel.png "Gumbel Distribution")
+
+_Gumbel Distribution_
 
 x is observed discharge data, u and x are parameters that shape the
 distribution.
@@ -145,8 +159,9 @@ fits our data with the following equations. Notice **x bar** is mean and
 **sx2** is variance. We will need to find **sx**, which is the square
 root of the variance, also known as the standard deviation.
 
-![Gumbel
-parameters](images/gumbelparams.png "Gumbel parameters"){width="248"}
+![](images/gumbelparams.png "Gumbel parameters"){width="248"}
+
+_Gumbel parameters_
 
 In the chunk below, calculate u and alpha by first calculating xbar
 (mean) and sx (standard deviation) and then using them in the above
@@ -166,7 +181,9 @@ Now that we have the parameters that best represent our data as a Gumbel
 Distribution, we can use the formula to create the theoretical values
 for the return interval according to that distribution.
 
-![Gumbel Distribution](images/gumbel.png "Gumbel Distribution")
+![](images/gumbel.png "Gumbel Distribution")
+
+_Gumbel Distribution_
 
 In the chunk below:
 
