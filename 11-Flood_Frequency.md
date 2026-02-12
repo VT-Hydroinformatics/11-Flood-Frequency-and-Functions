@@ -1,18 +1,14 @@
----
-title: "Chapter 11:  Flood Frequency and Functions"
-date: today
-author: JP Gannon
-format: gfm
-execute:
-  enabled: true
----
+# Chapter 11: Flood Frequency and Functions
+JP Gannon
+2026-02-12
 
 # Flood Frequency Analysis and Creating Functions
 
 ## Template Repository
 
 The following activity is available as a template github repository at
-the following link: https://github.com/VT-Hydroinformatics/11-Flood-Frequency-and-Functions
+the following link:
+https://github.com/VT-Hydroinformatics/11-Flood-Frequency-and-Functions
 
 ## Intro
 
@@ -29,7 +25,7 @@ probability flood we want!
 First we will load the tidyverse and dataRetrieval packages and the set
 the theme for our plots.
 
-```{r, warning=FALSE, results='hide',message=FALSE}
+``` r
 library(tidyverse)
 library(dataRetrieval)
 library(extRemes)
@@ -39,7 +35,7 @@ theme_set(theme_classic())
 ```
 
 Next, download the yearly peakflow data from USGS dataRetrieval using
-the readNWISpeak() function. We don't have to create our own yearly
+the readNWISpeak() function. We don’t have to create our own yearly
 values like we did in the low flow analysis. This function just returns
 the highest flow for each year.
 
@@ -47,18 +43,31 @@ Download the data for the New River at Radford.
 
 Then make a plot of the peak flow for each year.
 
-```{r}
+``` r
 radford <- "03171000"
 
 peakflows <- readNWISpeak(radford)
+```
 
+    ALERT: All NWIS services are slated for decommission
+    and new dataRetrieval functions will be added.
+    For up-to-date information, see: 
+    https://doi-usgs.github.io/dataRetrieval/articles/Status.html
+
+    GET: https://nwis.waterdata.usgs.gov/usa/nwis/peak/?range_selection=date_range&format=rdb&site_no=03171000
+
+    GET: https://waterservices.usgs.gov/nwis/site/?siteOutput=Expanded&format=rdb&site=03171000
+
+``` r
 ggplot(peakflows, aes(peak_dt, peak_va))+
   geom_point()
 ```
 
+![](11-Flood_Frequency_files/figure-commonmark/unnamed-chunk-2-1.png)
+
 As with the couple previous chapters, the next step is to create a
 column that contains the ranks of each flow in the record. Create a
-column that has the rank of each flow, with the highest flow ranked #1.
+column that has the rank of each flow, with the highest flow ranked \#1.
 Use select() to trim your dataset to just the peak data, peak values,
 and ranks columns.
 
@@ -66,7 +75,7 @@ Make the plot from the last code chunk again but color the points by
 rank to check that this worked. Also, look at the data through the
 environment tab in rstudio or using head() to double check.
 
-```{r}
+``` r
 #create rank column (minus flips the ranking)
 #then clean it up, pull out only peak value, date, rank
 peakflows <- peakflows |> 
@@ -77,9 +86,21 @@ peakflows <- peakflows |>
 ggplot(peakflows, 
        aes(peak_dt, peak_va, color = ranks))+
   geom_point()
+```
 
+![](11-Flood_Frequency_files/figure-commonmark/unnamed-chunk-3-1.png)
+
+``` r
 print(head(peakflows))
 ```
+
+         peak_dt peak_va ranks
+    1 1878-09-15  217000   2.0
+    2 1896-04-01   52400  41.0
+    3 1897-02-22   67200  25.0
+    4 1898-09-23   37200  71.0
+    5 1899-03-05   50600  42.5
+    6 1900-03-01   34000  79.5
 
 Now we need to calculate the exceedance probability and return period
 for each value in our data. For flood frequency analysis, it is common
@@ -110,7 +131,7 @@ exceedance probability, non-exceedance probability, and return period.
 Then make a plot with peak flow on the Y axis and Return Period on the
 X.
 
-```{r}
+``` r
 N <- length(peakflows$peak_dt)
 
 #calculate return period, exceedence/non-exceedence with Weibull
@@ -123,8 +144,9 @@ peakflows <- peakflows |>
 peakflows |> 
   ggplot(aes(x = Tp, y = peak_va)) +
   geom_point()
-
 ```
+
+![](11-Flood_Frequency_files/figure-commonmark/unnamed-chunk-4-1.png)
 
 Now we need to fit these data to a distribution in order to make a
 relationship we can use to predict the discharge of specific return
@@ -136,7 +158,7 @@ distribution:
 
 ![](images/gumbel.png "Gumbel Distribution")
 
-_Gumbel Distribution_
+*Gumbel Distribution*
 
 x is observed discharge data, u and x are parameters that shape the
 distribution.
@@ -146,15 +168,16 @@ fits our data with the following equations. Notice **x bar** is mean and
 **sx2** is variance. We will need to find **sx**, which is the square
 root of the variance, also known as the standard deviation.
 
-![](images/gumbelparams.png "Gumbel parameters"){width="248"}
+<img src="images/gumbelparams.png" title="Gumbel parameters"
+width="248" />
 
-_Gumbel parameters_
+*Gumbel parameters*
 
 In the chunk below, calculate u and alpha by first calculating xbar
 (mean) and sx (standard deviation) and then using them in the above
 equations for u and x.
 
-```{r}
+``` r
 xbar <- mean(peakflows$peak_va)
 
 sx <- sd(peakflows$peak_va)
@@ -170,7 +193,7 @@ for the return interval according to that distribution.
 
 ![](images/gumbel.png "Gumbel Distribution")
 
-_Gumbel Distribution_
+*Gumbel Distribution*
 
 In the chunk below:
 
@@ -184,7 +207,7 @@ the y. Include return periods calculated from your data and those
 calculated from the Gumbel distribution on your plot as points of
 different colors.
 
-```{r}
+``` r
 peakflows <- peakflows |> 
   mutate(
     pne_gumbel = exp(-exp(-((peak_va - u) / alpha)))) |>
@@ -197,11 +220,11 @@ peakflows |> ggplot() +
   ylab("Annual Peak Flows")+
   xlab("Return Period")+
   theme_classic() 
-
-
 ```
 
-Let's look at these data a slightly different way to make it easier to
+![](11-Flood_Frequency_files/figure-commonmark/unnamed-chunk-6-1.png)
+
+Let’s look at these data a slightly different way to make it easier to
 see what is going on and how we can pull of flows for different return
 periods.
 
@@ -212,7 +235,7 @@ limits set to 1 - 100. Save this plot, we will add to it later.
 With this plot you could look up the return period for any flood or the
 discharge level for any return period.
 
-```{r}
+``` r
 peakplot <- peakflows |> 
   ggplot() +
   geom_point(aes(x = Tp, y = peak_va, color = "Estimated"))+
@@ -224,6 +247,8 @@ peakplot <- peakflows |>
 
 peakplot
 ```
+
+![](11-Flood_Frequency_files/figure-commonmark/unnamed-chunk-7-1.png)
 
 This plot is showing a representation of the fitted distribution by
 calculating the return period for each point in our dataset. But we can
@@ -245,7 +270,7 @@ According to this flow, what is the 1 in 100 chance flood at this
 location? Do you see any issues with reporting this as the 1 in 100
 chance flood? What are they?
 
-```{r}
+``` r
 Tp = 100
 
 pne = 1 - (1/Tp)
@@ -253,7 +278,7 @@ pne = 1 - (1/Tp)
 peak_va = u - (alpha * log(-log(pne)))
 ```
 
-The gumbel distribution fit for the New River at Radford isn't great.
+The gumbel distribution fit for the New River at Radford isn’t great.
 Fortunately there are ways to find an appropriate fit.
 
 The generalized extreme value distribution will fit a much wider range
@@ -274,28 +299,61 @@ Here we will use the fevd() function from the extRemes package to fit a
 generalized extreme value distribution to our data.
 
 Below, do the following - Pass the peak flow values to fevd() and save
-the result as "GEVD". This will save all the outputs from fevd() so we
+the result as “GEVD”. This will save all the outputs from fevd() so we
 can use them in a few different ways.
 
--   Pass the "GEVD" object to summary() and then plot(). You can see the
-    GEVD object includes the three parameters: location, scale, and
-    shape. plot() also shows you how well the fit turned out using
-    several plots.
+- Pass the “GEVD” object to summary() and then plot(). You can see the
+  GEVD object includes the three parameters: location, scale, and shape.
+  plot() also shows you how well the fit turned out using several plots.
 
--   Save the location, scale, and shape parameters. You get them out of
-    the GEVD object using the following syntax: GEVD\$results\$par\[#\]
-    where \# is 1: Location, 2: Scale, 3: Shape. (if you are looking at
-    the syntax in an un-knitted rmd, ignore the backslashes)
+- Save the location, scale, and shape parameters. You get them out of
+  the GEVD object using the following syntax: GEVD\$results\$par\[#\]
+  where \# is 1: Location, 2: Scale, 3: Shape. (if you are looking at
+  the syntax in an un-knitted rmd, ignore the backslashes)
 
 Based on the parameters from the fit, what type of extreme value
 distribution best fits the New River data?
 
-```{r, fig.height=8, fig.width=8}
+``` r
 GEVD <- fevd(peakflows$peak_va)
 
 summary(GEVD)
-plot(GEVD)
+```
 
+
+    fevd(x = peakflows$peak_va)
+
+    [1] "Estimation Method used: MLE"
+
+
+     Negative Log-Likelihood Value:  1504.422 
+
+
+     Estimated parameters:
+        location        scale        shape 
+    3.246949e+04 1.691502e+04 3.026747e-01 
+
+     Standard Error Estimates:
+        location        scale        shape 
+    1.689057e+03 1.430623e+03 7.918811e-02 
+
+     Estimated parameter covariance matrix.
+                  location        scale         shape
+    location 2852912.67983 1543631.4491 -40.062720729
+    scale    1543631.44914 2046683.4900  -1.826300168
+    shape        -40.06272      -1.8263   0.006270757
+
+     AIC = 3014.844 
+
+     BIC = 3023.469 
+
+``` r
+plot(GEVD)
+```
+
+![](11-Flood_Frequency_files/figure-commonmark/unnamed-chunk-9-1.png)
+
+``` r
 location <- GEVD$results$par[1]
 scale <- GEVD$results$par[2]
 shape <- GEVD$results$par[3]
@@ -308,7 +366,7 @@ parameters from your distribution fit (location, scale, shape) and the
 non-exceedance probabilities calculated earlier (the pne column in the
 peakflows data).
 
-```{r}
+``` r
 peakflows <- peakflows |>
   mutate(
     GEVDflows = qevd(
@@ -322,11 +380,13 @@ Now add a line showing flows you just calculated to the plot we made
 above showing the Gumbel fit. Does this approach work better in this
 case?
 
-```{r}
+``` r
 #add a line to the plot above that shows the Gumbel fit
 peakplot + 
   geom_line(data = peakflows, aes(x = Tp, y = GEVDflows, color = "GEVD"))
 ```
+
+![](11-Flood_Frequency_files/figure-commonmark/unnamed-chunk-11-1.png)
 
 Finally, we can calculate the magnitude of a flow with a specific return
 interval using the same qevd() function. If we want the 1 in 100 chance
@@ -338,13 +398,16 @@ in 100 chance flood magnitude.
 How is this different from what we calculated above? Do you think it is
 more accurate? Why?
 
-```{r}
+``` r
 #p from above is the 
 qevd(p = .99, 
      loc = location, 
      scale = scale, 
      shape = shape)
 ```
+
+    location 
+    201482.4 
 
 This is a good opportunity to illustrate the usefulness of writing your
 own functions. When you install packages in R, you get a bunch of
@@ -354,13 +417,13 @@ simplify your analyses!
 You do this with the following syntax \>MyNewFunction \<-
 function(param1, param2){ \>code \>}
 
-Whatever the last line of the "code" portion of the function spits out,
-get's returned from the function. So if you said X \<-
+Whatever the last line of the “code” portion of the function spits out,
+get’s returned from the function. So if you said X \<-
 mynewfunction(param1, parm2) X would now have it in whatever your
 function returned. See a simple example below: a function that adds 1 to
 any number we pass to it.
 
-```{r}
+``` r
 add1 <- function(number){
           number + 1
           }
@@ -368,20 +431,22 @@ add1 <- function(number){
 add1(4)
 ```
 
-Let's create a function that returns the return period for a flood of
+    [1] 5
+
+Let’s create a function that returns the return period for a flood of
 any magnitude for the gage we are investigating. Creating functions is a
 great way to streamline your workflow. You can write a function that
 performs an operation you need to perform a bunch of times, then just
 use the function rather than re-writing/copying the code.
 
-Our function will be called "ReturnPeriod" and we will pass it the flow
+Our function will be called “ReturnPeriod” and we will pass it the flow
 we want the return period for, and the u and alpha of the distribution.
 
 We will test the function by having it calculate the return period for
 the 100 year flood we calculated earlier (120027). If it works, it
 should spit out 100.
 
-```{r}
+``` r
 ReturnPeriod <- function(flow, u, alpha){
   
   pTheoretical = exp(-exp(-((flow - u) / alpha)))
@@ -391,15 +456,12 @@ ReturnPeriod <- function(flow, u, alpha){
 }
 
 ReturnPeriod(158349, u, alpha)
-
 ```
+
+    [1] 87.03187
 
 ## Challenge: Create a function
 
 Create a function that returns the 100 year flood when given a USGS gage
 id. Use the generalized extreme value distribution fit function to do
 this.
-
-```{r}
-
-```
