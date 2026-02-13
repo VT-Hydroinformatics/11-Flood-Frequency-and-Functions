@@ -1,6 +1,6 @@
 # Chapter 11: Flood Frequency and Functions
 JP Gannon
-2026-02-12
+2026-02-13
 
 # Flood Frequency Analysis and Creating Functions
 
@@ -39,13 +39,15 @@ the readNWISpeak() function. We don’t have to create our own yearly
 values like we did in the low flow analysis. This function just returns
 the highest flow for each year.
 
-Download the data for the New River at Radford.
+Download the data for the New River at Radford: USGS-03171000.
 
 Then make a plot of the peak flow for each year.
 
 ``` r
+#using old readNWIS function, so no USGS prefix
 radford <- "03171000"
 
+#2026 note: still using readNWISpeak. Function not yet replaced in dataRetrieval.
 peakflows <- readNWISpeak(radford)
 ```
 
@@ -339,8 +341,8 @@ summary(GEVD)
 
      Estimated parameter covariance matrix.
                   location        scale         shape
-    location 2852912.67983 1543631.4491 -40.062720729
-    scale    1543631.44914 2046683.4900  -1.826300168
+    location 2852912.64935 1543631.4282 -40.062719605
+    scale    1543631.42821 2046683.4772  -1.826299701
     shape        -40.06272      -1.8263   0.006270757
 
      AIC = 3014.844 

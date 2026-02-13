@@ -43,15 +43,17 @@ the readNWISpeak() function. We don't have to create our own yearly
 values like we did in the low flow analysis. This function just returns
 the highest flow for each year.
 
-Download the data for the New River at Radford.
+Download the data for the New River at Radford: USGS-03171000.
 
 Then make a plot of the peak flow for each year.
 
 ```{r}
+#using old readNWIS function, so no USGS prefix
 radford <- "03171000"
 
+#2026 note: still using readNWISpeak. Function not yet replaced in dataRetrieval.
 peakflows <- readNWISpeak(radford)
-
+ 
 ggplot(peakflows, aes(peak_dt, peak_va))+
   geom_point()
 ```
